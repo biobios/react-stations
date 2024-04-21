@@ -21,12 +21,12 @@ describe('<DogListContainer />', () => {
 })
 
 describe('<App />', () => {
-  const fetch = vi.fn()
-  window.fetch = fetch
-
-  fetch.mockImplementation(fetchMock)
-
   it("triggers `fetch()` when the '表示' or 'Show' button is clicked", async () => {
+    const fetch = vi.fn()
+    window.fetch = fetch
+
+    fetch.mockImplementation(fetchMock)
+
     const res = await render(<App />)
     const buttons = Array.from(res.container.querySelectorAll('button'))
     const button = buttons.find(r =>
@@ -45,6 +45,11 @@ describe('<App />', () => {
   })
 
   it('shows the list of image when the button is clicked', async () => {
+    const fetch = vi.fn()
+    window.fetch = fetch
+
+    fetch.mockImplementation(fetchMock)
+
     const res = await render(<App />)
     const buttons = Array.from(res.container.querySelectorAll('button'))
     const button = buttons.find(r =>
@@ -56,14 +61,17 @@ describe('<App />', () => {
     if (!button) {
       return
     }
+
+    await new Promise<void>(resolve => setTimeout(resolve, 1000))
+
     expect(fireEvent.click(button)).toBeTruthy()
 
     expect(fetch).toBeCalled()
     await waitFor(() => {
       const imgList = res.container.querySelectorAll('img')
       expect(imgList.length).toBeGreaterThan(1)
-      imgList.forEach((img) => {
-        expect(img.src).not.toBe('');
+      imgList.forEach(img => {
+        expect(img.src).not.toBe('')
       })
     })
   })
